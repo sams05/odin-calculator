@@ -26,9 +26,7 @@ Press equal sign:
 Type up number (first number after pressing the equal sign):
 - On first digit pressed: clear display of previous number and replace with first digit
 - On each digit pressed, display each digit as they are typed
-Click operator key (first time after pressing the equal sign):
-- Store the operator pressed
-- Light up the operator key
+Click operator key (first time)
 Type up number (subsequent number)
 ...
 
@@ -40,22 +38,34 @@ Type up number (subsequent number)
 ## Summary
 Type up number:
 - Clear up any lightings on operator keys
-- If first digit pressed: 
-    - clear display of previous number and replace with first digit
+- If first digit pressed (newNumber = True): 
+    - Clear display of previous number and replace with first digit
+    - Set newNumber = False
+    - If equalPressed
+        - Set flag that this starts a new calculation (firstCalc = True)
+        - equalPressed = False
 - On each digit pressed, display each digit as they are typed
 
 Click operator key:
-- If first calculation:
+- equalPressed = False
+- If first calculation (firstCalc = True):
     - Store the number into accumulator
+    - set firstCalc = False
 - Else
     - Update the accumulator
         - Use the current operator stored to operate on the current accumulator and current number
     - Display the accumulator
 - Store the operator pressed
+- Set state of calculator to enter next number (newNumber = True)
 - Light up the operator key
 
 Press equal sign:
 - Update the accumulator
     - Use the current operator stored to operate on the current accumulator and current number
 - Set operator to null
+- Set state of calculator to enter next number (newNumber = True)
+- Flag to allow for new calculation if user pressed a number button next (equalPressed = True)
 - Display the accumulator
+
+Press clear button:
+- firstCalc = True

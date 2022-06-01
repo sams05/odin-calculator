@@ -1,4 +1,7 @@
 let accumulator = 0;
+let newNumber = true;
+let firstCalc = true;
+let equalPressed = false;
 let operatorInUse = null;
 
 function add(num1, num2) {
@@ -71,9 +74,21 @@ function btnTextToOperator(btnText) {
 function registerNumberClick() {
     clearOperatorButton();
 
-    let num = getDisplayText();
-    num += this.textContent;
-    displayText(num);
+    // If starting a new number, display just the new digit, otherwise concatenate new digit 
+    // to the end
+    const newDigit = this.textContent;
+    if(newNumber) {
+        displayText(newDigit);
+        // If previous key pressed is the equals key, flag to reset the accumulator
+        if(equalPressed) {
+            firstCalc = true;
+        }
+        newNumber = false;
+    } else {
+        let num = getDisplayText();
+        num += newDigit
+        displayText(num);
+    }
 }
 
 // Return operator buttons to normal appearance
@@ -90,23 +105,32 @@ function clearCalc() {
 
     // Clear memory
     accumulator = 0;
-    operatorInUse = 0;
+    newNumber = true;
+    firstCalc = true;
+    equalPressed = false;
+    operatorInUse = null;
 
     // Clear operation in progress display
     clearOperatorButton();
 }
 
 function registerOperatorClick() {
-    // Get calculation done so far
-    const display = document.querySelector('.display');
-    accumulator = +display.textContent;
+    equalPressed = false;
 
-    // Clear display
-    displayText('');
+    if(firstCalc) {
+        accumulator = +getDisplayText();
+        firstCalc = false;
+    } else {
+        // Update the accumulator
+        processNewCalculation();
+    }
 
     // Get the operator and light up the operator button to indicate it has been hit
     operatorInUse = btnTextToOperator(this.textContent);
     this.classList.add('operating');
+
+    // Prepare calculator to enter next number
+    newNumber = true;
 }
 
 /**
@@ -122,6 +146,8 @@ function processNewCalculation() {
 
 function registerEqualClick() {
     processNewCalculation();
+    newNumber = true;
+    equalPressed = true;
 }
 
 const numberButtons = document.querySelectorAll('.number-btn');
