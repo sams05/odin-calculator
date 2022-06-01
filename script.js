@@ -1,3 +1,5 @@
+let accumulator = 0;
+let operatorInUse = null;
 
 function add(num1, num2) {
     return num1 + num2;
@@ -45,29 +47,87 @@ function displayText(text) {
     display.textContent = text;
 }
 
+function getDisplayText() {
+    const display = document.querySelector('.display');
+    return display.textContent;
+}
+
+function btnTextToOperator(btnText) {
+    switch(btnText) {
+        case '+':
+            return '+';  
+        case '-':
+            return '-';
+        case '×':
+            return '*';
+        case '÷':
+            return '/';        
+    }
+}
+
 /**
  * Event handler to update the display when the user clicked a number button
  */
 function registerNumberClick() {
-    const display = document.querySelector('.display');
-    let num = display.textContent;
+    clearOperatorButton();
+
+    let num = getDisplayText();
     num += this.textContent;
     displayText(num);
 }
 
-function clearDisplay() {
-    const display = document.querySelector('.display');
-    display.textContent = '';
-}
-
-function main() {
-    const numberButtons = document.querySelectorAll('.number-btn');
-    for(const btn of numberButtons) {
-        btn.addEventListener('click', registerNumberClick);
+// Return operator buttons to normal appearance
+function clearOperatorButton() {
+    const operatorButtons = [...document.querySelectorAll('.operator')];
+    for(const btn of operatorButtons) {
+        btn.classList.remove('operating');
     }
-
-    const clearButton = document.querySelector('#clear');
-    clearButton.addEventListener('click', clearDisplay);
 }
 
-main();
+function clearCalc() {
+    // Clear display
+    displayText('');
+
+    // Clear memory
+    accumulator = 0;
+    operatorInUse = 0;
+
+    // Clear operation in progress display
+    clearOperatorButton();
+}
+
+function registerOperatorClick() {
+    // Get calculation done so far
+    const display = document.querySelector('.display');
+    accumulator = +display.textContent;
+
+    // Clear display
+    displayText('');
+
+    // Get the operator and light up the operator button to indicate it has been hit
+    operatorInUse = btnTextToOperator(this.textContent);
+    this.classList.add('operating');
+}
+
+// TODO handle case when operatorInUse is null
+function registerEqualClick() {
+    const num = +getDisplayText();
+    const finalNum = operate(accumulator, num, operatorInUse);
+    displayText(finalNum);
+}
+
+const numberButtons = document.querySelectorAll('.number-btn');
+for(const btn of numberButtons) {
+    btn.addEventListener('click', registerNumberClick);
+}
+
+const clearButton = document.querySelector('#clear');
+clearButton.addEventListener('click', clearCalc);
+
+const operatorButtons = document.querySelectorAll('.operator');
+for(const btn of operatorButtons) {
+    btn.addEventListener('click', registerOperatorClick);
+}
+
+const equalButton = document.querySelector('#equal');
+equalButton.addEventListener('click', registerEqualClick);
