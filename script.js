@@ -109,11 +109,19 @@ function registerOperatorClick() {
     this.classList.add('operating');
 }
 
-// TODO handle case when operatorInUse is null
-function registerEqualClick() {
+/**
+ * Update and display the accumulator according to the operatorInUse
+ * // TODO handle case when operatorInUse is null
+ */
+function processNewCalculation() {
     const num = +getDisplayText();
-    const finalNum = operate(accumulator, num, operatorInUse);
-    displayText(finalNum);
+    accumulator = operate(accumulator, num, operatorInUse);
+    operatorInUse = null;
+    displayText(accumulator);
+}
+
+function registerEqualClick() {
+    processNewCalculation();
 }
 
 const numberButtons = document.querySelectorAll('.number-btn');
