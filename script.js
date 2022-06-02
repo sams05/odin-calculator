@@ -133,9 +133,18 @@ function handleOperatorClick() {
     prevKey = 'operator';
 }
 
-
+/**
+ * Operate on the accumulator and the last entered number then display the result
+ */
 function handleEqualClick() {
-
+    if(prevKey === null || prevKey === 'number1' || prevKey === 'operator') {
+        return;
+    }
+    if(prevKey === 'number2') {
+        number2 = +getDisplayText();
+        accumulator = operate(accumulator, number2, operatorInUse);
+        displayText(accumulator);
+    }
     prevKey = 'equal';
 }
 
