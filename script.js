@@ -1,5 +1,11 @@
-
+/* preKey indicates the previous class of key that was clicked and includes, 
+"number1," "number2," "operator," and "equal."
+"number1" refers to when the number keys are pressed to enter in the first number in the calculation.
+"number2" refers to subsequent numbers in the calculation.
+*/
 let prevKey = null;
+let accumulator = 0;
+let operatorInUse = null;
 
 function add(num1, num2) {
     return num1 + num2;
@@ -52,6 +58,30 @@ function getDisplayText() {
     return display.textContent;
 }
 
+// Return operator buttons to normal appearance
+function clearOperatorButton() {
+    const operatorButtons = [...document.querySelectorAll('.operator')];
+    for(const btn of operatorButtons) {
+        btn.classList.remove('operating');
+    }
+}
+
+function lightOperatorButton(btn) {
+    btn.classList.add('operating');
+}
+
+function handleClearClick() {
+    // Clear display
+    displayText('');
+
+    // Clear memory
+    prevKey = null;
+    operatorInUse = null;
+
+    // Clear any operator button lighting
+    clearOperatorButton();
+}
+
 /**
  * Event handler to update the display when the user clicked a number button
  */
@@ -59,7 +89,6 @@ function handleNumberClick() {
     clearOperatorButton();
     const newDigit = this.textContent;
 
-    // Entering first digit
     if(prevKey === null || prevKey === 'equal' || prevKey === 'operator') {
         // Entering first digit
         displayText(newDigit);
@@ -77,26 +106,29 @@ function handleNumberClick() {
     }
 }
 
-// Return operator buttons to normal appearance
-function clearOperatorButton() {
-    const operatorButtons = [...document.querySelectorAll('.operator')];
-    for(const btn of operatorButtons) {
-        btn.classList.remove('operating');
-    }
-}
-
-function clearCalc() {
-    // Clear display
-    displayText('');
-
-    // Clear memory
-
-
-    // Clear operation in progress display
-    clearOperatorButton();
-}
-
+/**
+ * Do nothing if there is no previous key.
+ * If the previous key is a number, update the accumulator then store the operator.
+ * If the previous key is an operator, change the operator.
+ */
 function handleOperatorClick() {
+    if(prevKey === null) {
+        return;
+    }
+    if(prevKey === 'number1' || prevKey === 'number2' || prevKey === 'equal') {
+        // Update and store accumulator
+        if(prevKey === 'number1' || prevKey === 'equal') {
+            accumulator = +getDisplayText();
+        } else {
+            number2 = +getDisplayText();
+            accumulator = operate(accumulator, number2, operatorInUse);
+            displayText(accumulator);
+        }
+    }
+    // Update operator to the one that is just clicked
+    operatorInUse = this.textContent;
+    clearOperatorButton(); // Clear lighting for any previous operator button
+    lightOperatorButton(this);
 
     prevKey = 'operator';
 }
@@ -113,7 +145,7 @@ for(const btn of numberButtons) {
 }
 
 const clearButton = document.querySelector('#clear');
-clearButton.addEventListener('click', clearCalc);
+clearButton.addEventListener('click', handleClearClick);
 
 const operatorButtons = document.querySelectorAll('.operator');
 for(const btn of operatorButtons) {
