@@ -1,4 +1,5 @@
 
+let prevKey = null;
 
 function add(num1, num2) {
     return num1 + num2;
@@ -56,21 +57,23 @@ function getDisplayText() {
  */
 function handleNumberClick() {
     clearOperatorButton();
-
-    // If starting a new number, display just the new digit, otherwise concatenate new digit 
-    // to the end
     const newDigit = this.textContent;
-    if(newNumber) {
+
+    // Entering first digit
+    if(prevKey === null || prevKey === 'equal' || prevKey === 'operator') {
+        // Entering first digit
         displayText(newDigit);
-        // If previous key pressed is the equals key, flag to reset the accumulator
-        if(equalPressed) {
-            firstCalc = true;
+        if(prevKey === null || prevKey === 'equal') {
+            prevKey = 'number1';
+        } else {
+            prevKey = 'number2';
         }
-        newNumber = false;
     } else {
+        // Entering subsequent digits
         let num = getDisplayText();
-        num += newDigit
+        num += newDigit;
         displayText(num);
+        // prevKey remains number1 or number2
     }
 }
 
@@ -95,11 +98,13 @@ function clearCalc() {
 
 function handleOperatorClick() {
 
+    prevKey = 'operator';
 }
 
 
 function handleEqualClick() {
 
+    prevKey = 'equal';
 }
 
 const numberButtons = document.querySelectorAll('.number-btn');
