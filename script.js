@@ -137,6 +137,9 @@ function handleNumberClick() {
     } else {
         // Entering subsequent digits
         let num = getDisplayText();
+        if(newDigit === '.' && num.includes('.')) {
+            return;
+        }
         if(num.length === DIGIT_LIMIT) {
             return;
         }
