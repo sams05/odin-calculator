@@ -7,10 +7,6 @@ body {
     margin: 0;
 }
 
-.row {
-    display: flex;
-}
-
 .calculator-container {
     height: 100vh;
     display: flex;
@@ -38,7 +34,7 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    font-size: 60px;
+    font-size: 50px;
     font-family: monospace;
 }
 

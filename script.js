@@ -6,6 +6,7 @@
 let prevKey = null;
 let accumulator = 0;
 let operatorInUse = null;
+const DIGIT_LIMIT = 11; // Limit to amount of digits that can be displayed
 
 function add(num1, num2) {
     return num1 + num2;
@@ -53,6 +54,29 @@ function displayText(text) {
     display.textContent = text;
 }
 
+function displayNumber(num) {
+// Test cases: 
+// 95175382 / 3 * 7
+// 95175382 / 3 * 30013
+    const [whole, decimal] = num.toString().split('.');
+
+    if(whole.length > DIGIT_LIMIT) {
+        displayText('Error: Overflow');
+        return;
+    }
+    if(!decimal || whole.length === DIGIT_LIMIT || whole.length + 1 === DIGIT_LIMIT) {
+        displayText(whole);
+    } else {
+        // At least one decimal to display
+        if(whole.length + 1 + decimal.length <= DIGIT_LIMIT) {
+            displayText(num);
+        } else {
+            availableSpace = DIGIT_LIMIT - whole.length - 1;
+            displayText(num.toFixed(availableSpace));
+        }
+    }
+}
+
 function getDisplayText() {
     const display = document.querySelector('.display');
     return display.textContent;
@@ -76,6 +100,7 @@ function handleClearClick() {
 
     // Clear memory
     prevKey = null;
+    accumulator = 0;
     operatorInUse = null;
 
     // Clear any operator button lighting
@@ -100,6 +125,9 @@ function handleNumberClick() {
     } else {
         // Entering subsequent digits
         let num = getDisplayText();
+        if(num.length === DIGIT_LIMIT) {
+            return;
+        }
         num += newDigit;
         displayText(num);
         // prevKey remains number1 or number2
@@ -122,7 +150,7 @@ function handleOperatorClick() {
         } else {
             number2 = +getDisplayText();
             accumulator = operate(accumulator, number2, operatorInUse);
-            displayText(accumulator);
+            displayNumber(accumulator);
         }
     }
     // Update operator to the one that is just clicked
@@ -143,7 +171,7 @@ function handleEqualClick() {
     if(prevKey === 'number2') {
         number2 = +getDisplayText();
         accumulator = operate(accumulator, number2, operatorInUse);
-        displayText(accumulator);
+        displayNumber(accumulator);
     }
     prevKey = 'equal';
 }
