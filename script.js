@@ -55,9 +55,11 @@ function displayText(text) {
 }
 
 function displayNumber(num) {
-// Test cases: 
-// 95175382 / 3 * 7
-// 95175382 / 3 * 30013
+    if(typeof num === 'string') {
+        displayText(num);
+        return;
+    }
+
     const [whole, decimal] = num.toString().split('.');
 
     if(whole.length > DIGIT_LIMIT) {
@@ -65,6 +67,7 @@ function displayNumber(num) {
         return;
     }
     if(!decimal || whole.length === DIGIT_LIMIT || whole.length + 1 === DIGIT_LIMIT) {
+        // No decimals or not enough space to display decimals
         displayText(whole);
     } else {
         // At least one decimal to display
@@ -75,6 +78,15 @@ function displayNumber(num) {
             displayText(num.toFixed(availableSpace));
         }
     }
+}
+
+function handleDivByZero(num2, operator) {
+    if(num2 === 0 && operator === '÷') {
+        handleClearClick();
+        displayText('🚨Div by 0🚨');
+        return true;
+    }
+    return false;
 }
 
 function getDisplayText() {
@@ -149,6 +161,9 @@ function handleOperatorClick() {
             accumulator = +getDisplayText();
         } else {
             number2 = +getDisplayText();
+            if(handleDivByZero(number2, operatorInUse)) {
+                return;
+            }
             accumulator = operate(accumulator, number2, operatorInUse);
             displayNumber(accumulator);
         }
@@ -170,6 +185,9 @@ function handleEqualClick() {
     }
     if(prevKey === 'number2') {
         number2 = +getDisplayText();
+        if(handleDivByZero(number2, operatorInUse)) {
+            return;
+        }
         accumulator = operate(accumulator, number2, operatorInUse);
         displayNumber(accumulator);
     }
