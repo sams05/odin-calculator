@@ -197,6 +197,14 @@ function handleEqualClick() {
     prevKey = 'equal';
 }
 
+function handleTyping(e) {
+    const key = document.querySelector(`button[data-key="${e.keyCode}"]`);
+    if(!key) {
+        return;
+    }
+    key.click();
+}
+
 const numberButtons = document.querySelectorAll('.number-btn');
 for(const btn of numberButtons) {
     btn.addEventListener('click', handleNumberClick);
@@ -212,3 +220,5 @@ for(const btn of operatorButtons) {
 
 const equalButton = document.querySelector('#equal');
 equalButton.addEventListener('click', handleEqualClick);
+
+window.addEventListener('keypress', handleTyping);
